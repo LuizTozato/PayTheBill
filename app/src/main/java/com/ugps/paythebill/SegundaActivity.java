@@ -10,18 +10,29 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class SegundaActivity extends AppCompatActivity {
 
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
     private TextView servidor1;
     private TextView servidor2;
+    private TextView total1;
+    private TextView total2;
+    private TextView resultado;
 
-    private EditText editValor;
-    private EditText editDescrição;
+    private EditText editValor1;
+    private EditText editValor2;
+    private EditText editDescrição1;
+    private EditText editDescrição2;
 
-    private ListView listGastos;
-    private ArrayList<String> itens = new ArrayList<String>();
+    private ListView listGastos1;
+    private ListView listGastos2;
+    private ArrayList<String> itens1 = new ArrayList<String>();
+    private ArrayList<String> itens2 = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +41,9 @@ public class SegundaActivity extends AppCompatActivity {
 
         servidor1 = findViewById(R.id.textServidor1);
         servidor2 = findViewById(R.id.textServidor2);
+        total1    = findViewById(R.id.textTotal1);
+        total2    = findViewById(R.id.textTotal2);
+        resultado = findViewById(R.id.textResultado);
 
         //recuperando os dados vindo da Intent
         Bundle dados = getIntent().getExtras();
@@ -41,22 +55,82 @@ public class SegundaActivity extends AppCompatActivity {
 
         //================ COLOCANDO VALOR NA LISTA ====================
 
-        listGastos = findViewById(R.id.listGastos);
-        Button buttonAdicionar = findViewById(R.id.buttonAdicionar);
-        editValor = findViewById(R.id.editValor);
-        editDescrição = findViewById(R.id.editDescrição);
+        listGastos1 = findViewById(R.id.listGastos1);
+        listGastos2 = findViewById(R.id.listGastos2);
+        Button buttonAdicionar1 = findViewById(R.id.buttonAdicionar1);
+        Button buttonAdicionar2 = findViewById(R.id.buttonAdicionar2);
+        editValor1 = findViewById(R.id.editValor1);
+        editValor2 = findViewById(R.id.editValor2);
+        editDescrição1 = findViewById(R.id.editDescrição1);
+        editDescrição2 = findViewById(R.id.editDescrição2);
 
-        buttonAdicionar.setOnClickListener(new View.OnClickListener() {
+        //============== BOTÃO SERVIDOR 1 ========================
+        buttonAdicionar1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String str = editDescrição.getText().toString() + " - " + editValor.getText().toString();
-                itens.add(str);
 
-                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, itens);
-                listGastos.setAdapter(arrayAdapter);
+                String timeStamp = sdf.format(new Date());
 
+                String str = editDescrição1.getText().toString() + " - R$"
+                               + editValor1.getText().toString() + "\n"
+                               + timeStamp;
+                itens1.add(str);
+
+                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                                                                            getApplicationContext(),
+                                                                            android.R.layout.simple_list_item_1,
+                                                                            itens1);
+                listGastos1.setAdapter(arrayAdapter);
+
+                double aux = Double.parseDouble(total1.getText().toString());
+                aux += Double.parseDouble(editValor1.getText().toString());
+                total1.setText(String.valueOf(aux));
+
+                /*
+                if(Double.parseDouble(total1.toString()) > Double.parseDouble(total2.toString())){
+                    resultado.setText(servidor2.toString());
+                } else {
+                    resultado.setText(servidor1.toString());
+                }
+                */
             }
         });
+
+
+        //============== BOTÃO SERVIDOR 2 ========================
+        buttonAdicionar2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String timeStamp = sdf.format(new Date());
+
+                String str = editDescrição2.getText().toString() + " - R$"
+                        + editValor2.getText().toString() + "\n"
+                        + timeStamp;
+                itens2.add(str);
+
+                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                        getApplicationContext(),
+                        android.R.layout.simple_list_item_1,
+                        itens2);
+                listGastos2.setAdapter(arrayAdapter);
+
+                double aux = Double.parseDouble(total2.getText().toString());
+                aux += Double.parseDouble(editValor2.getText().toString());
+                total2.setText(String.valueOf(aux));
+
+                /*
+                if(Double.parseDouble(total1.toString()) > Double.parseDouble(total2.toString())){
+                    resultado.setText(servidor2.toString());
+                } else {
+                    resultado.setText(servidor1.toString());
+                }
+                */
+            }
+        });
+
+
+
 
     }
 }
