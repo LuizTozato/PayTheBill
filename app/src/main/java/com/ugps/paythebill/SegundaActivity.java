@@ -41,14 +41,20 @@ public class SegundaActivity extends AppCompatActivity {
 
         servidor1 = findViewById(R.id.textServidor1);
         servidor2 = findViewById(R.id.textServidor2);
+
         total1    = findViewById(R.id.textTotal1);
+        String zero = "0";
+        total1.setText(zero);
+
         total2    = findViewById(R.id.textTotal2);
+        total2.setText(zero);
+
         resultado = findViewById(R.id.textResultado);
 
         //recuperando os dados vindo da Intent
         Bundle dados = getIntent().getExtras();
-        String nome1 = dados.getString("nome1");
-        String nome2 = dados.getString("nome2");
+        final String nome1 = dados.getString("nome1");
+        final String nome2 = dados.getString("nome2");
 
         servidor1.setText(nome1);
         servidor2.setText(nome2);
@@ -86,13 +92,15 @@ public class SegundaActivity extends AppCompatActivity {
                 aux += Double.parseDouble(editValor1.getText().toString());
                 total1.setText(String.valueOf(aux));
 
-                /*
-                if(Double.parseDouble(total1.toString()) > Double.parseDouble(total2.toString())){
-                    resultado.setText(servidor2.toString());
+                double totalPago1 = Double.parseDouble(total1.getText().toString());
+                double totalPago2 = Double.parseDouble(total2.getText().toString());
+
+                if(totalPago1 > totalPago2){
+                    resultado.setText(nome2);
                 } else {
-                    resultado.setText(servidor1.toString());
+                    resultado.setText(nome1);
                 }
-                */
+
             }
         });
 
@@ -119,18 +127,16 @@ public class SegundaActivity extends AppCompatActivity {
                 aux += Double.parseDouble(editValor2.getText().toString());
                 total2.setText(String.valueOf(aux));
 
-                /*
-                if(Double.parseDouble(total1.toString()) > Double.parseDouble(total2.toString())){
-                    resultado.setText(servidor2.toString());
+                double totalPago1 = Double.parseDouble(total1.getText().toString());
+                double totalPago2 = Double.parseDouble(total2.getText().toString());
+
+                if(totalPago1 > totalPago2){
+                    resultado.setText(nome2);
                 } else {
-                    resultado.setText(servidor1.toString());
+                    resultado.setText(nome1);
                 }
-                */
+
             }
         });
-
-
-
-
     }
 }
