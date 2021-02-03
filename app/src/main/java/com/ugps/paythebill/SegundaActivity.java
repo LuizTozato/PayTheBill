@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -15,29 +16,33 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class SegundaActivity extends AppCompatActivity {
-    /*
+
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-    private TextView servidor1;
-    private TextView servidor2;
-    private TextView total1;
-    private TextView total2;
-    private TextView resultado;
+    private Switch switch1, switch2;
 
-    private EditText editValor1;
-    private EditText editValor2;
-    private EditText editDescrição1;
-    private EditText editDescrição2;
+    private ListView listGastos;
+    private ArrayList<String> lista = new ArrayList<String>();
 
-    private ListView listGastos1;
-    private ListView listGastos2;
-    private ArrayList<String> itens1 = new ArrayList<String>();
-    private ArrayList<String> itens2 = new ArrayList<String>();
-    */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_segunda);
+
+        //CONECTANDO OS NOMES ÀS ENTIDADES
+        switch1 = findViewById(R.id.switch1);
+        switch2 = findViewById(R.id.switch2);
+
+        //RECUPERANDO OS DADOS DA INTENT
+        Bundle dados = getIntent().getExtras();
+        final String nome1 = dados.getString("nome1");
+        final String nome2 = dados.getString("nome2");
+
+        //SETTANDO NOME DOS SWITCHES
+        switch1.setText(nome1);
+        switch2.setText(nome2);
+
 
         /*
         servidor1 = findViewById(R.id.textServidor1);
