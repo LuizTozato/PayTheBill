@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class SegundaActivity extends AppCompatActivity {
-
+    /*
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     private TextView servidor1;
@@ -33,12 +33,13 @@ public class SegundaActivity extends AppCompatActivity {
     private ListView listGastos2;
     private ArrayList<String> itens1 = new ArrayList<String>();
     private ArrayList<String> itens2 = new ArrayList<String>();
-
+    */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_segunda);
 
+        /*
         servidor1 = findViewById(R.id.textServidor1);
         servidor2 = findViewById(R.id.textServidor2);
 
@@ -137,6 +138,6 @@ public class SegundaActivity extends AppCompatActivity {
                 }
 
             }
-        });
+        });*/
     }
 }

@@ -10,8 +10,6 @@ import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
 
-
-    
     private Button buttonEnter;
     private EditText servidor1,servidor2;
 
@@ -39,7 +37,5 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-
     }
 }
