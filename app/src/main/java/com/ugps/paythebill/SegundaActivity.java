@@ -1,148 +1,114 @@
 package com.ugps.paythebill;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Switch;
-import android.widget.TextView;
-
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import com.google.android.material.textfield.TextInputEditText;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class SegundaActivity extends AppCompatActivity {
 
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
+    private Toolbar toolbar;
     private Switch switch1, switch2;
-
-    private ListView listGastos;
-    private ArrayList<String> lista = new ArrayList<String>();
-
+    private TextInputEditText itemComprado, valorCompra, dataCompra;
+    private Button botaoAdicionar;
+    private ArrayList<String> listaArray = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_segunda);
+        toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("Pay the Bill");
+        toolbar.inflateMenu(R.menu.menu);
 
         //CONECTANDO OS NOMES ÀS ENTIDADES
-        switch1 = findViewById(R.id.switch1);
-        switch2 = findViewById(R.id.switch2);
+        switch1 =           findViewById(R.id.switch1);
+        switch1.setChecked(true);
+
+        switch2 =           findViewById(R.id.switch2);
+        itemComprado =      findViewById(R.id.itemComprado);
+        valorCompra =       findViewById(R.id.valorCompra);
+        dataCompra =        findViewById(R.id.dataCompra);
+        botaoAdicionar =    findViewById(R.id.botaoAdicionar);
 
         //RECUPERANDO OS DADOS DA INTENT
         Bundle dados = getIntent().getExtras();
-        final String nome1 = dados.getString("nome1");
-        final String nome2 = dados.getString("nome2");
+        if (dados != null) {
+            final String nome1 = dados.getString("nome1");
+            final String nome2 = dados.getString("nome2");
 
-        //SETTANDO NOME DOS SWITCHES
-        switch1.setText(nome1);
-        switch2.setText(nome2);
+           //SETTANDO NOME DOS SWITCHES
+            switch1.setText(nome1);
+            switch2.setText(nome2);
+        }
 
+        //GARANTINDO UNICO SWITCH ATIVADO
+        switch1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(switch2.isChecked()){
+                    switch2.setChecked(false); //desliga o outro switch
+                }
+            }
+        });
 
-        /*
-        servidor1 = findViewById(R.id.textServidor1);
-        servidor2 = findViewById(R.id.textServidor2);
+        switch2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(switch1.isChecked()){
+                    switch1.setChecked(false); //desliga o outro switch
+                }
+            }
+        });
 
-        total1    = findViewById(R.id.textTotal1);
-        String zero = "0";
-        total1.setText(zero);
+        //CONFIGURANDO BOTÃO SETTINGS DO MENU
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_settings:
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        //iniciando outra activity passando origem e destino
+                        startActivity(intent);
+                        return true;
 
-        total2    = findViewById(R.id.textTotal2);
-        total2.setText(zero);
+                    default:
+                        // If we got here, the user's action was not recognized.
+                        // Invoke the superclass to handle it.
+                        return false;
+                }
+            }
+        });
 
-        resultado = findViewById(R.id.textResultado);
-
-        //recuperando os dados vindo da Intent
-        Bundle dados = getIntent().getExtras();
-        final String nome1 = dados.getString("nome1");
-        final String nome2 = dados.getString("nome2");
-
-        servidor1.setText(nome1);
-        servidor2.setText(nome2);
-
-        //================ COLOCANDO VALOR NA LISTA ====================
-
-        listGastos1 = findViewById(R.id.listGastos1);
-        listGastos2 = findViewById(R.id.listGastos2);
-        Button buttonAdicionar1 = findViewById(R.id.buttonAdicionar1);
-        Button buttonAdicionar2 = findViewById(R.id.buttonAdicionar2);
-        editValor1 = findViewById(R.id.editValor1);
-        editValor2 = findViewById(R.id.editValor2);
-        editDescrição1 = findViewById(R.id.editDescrição1);
-        editDescrição2 = findViewById(R.id.editDescrição2);
-
-        //============== BOTÃO SERVIDOR 1 ========================
-        buttonAdicionar1.setOnClickListener(new View.OnClickListener() {
+        //============================ COLOCANDO VALORES NA LISTA ============================
+        botaoAdicionar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                String timeStamp = sdf.format(new Date());
+                String textoJuntado =   itemComprado.getText().toString()+
+                        " R$"+valorCompra.getText().toString()+
+                        " "+dataCompra.getText().toString();
 
-                String str = editDescrição1.getText().toString() + " - R$"
-                               + editValor1.getText().toString() + "\n"
-                               + timeStamp;
-                itens1.add(str);
+                listaArray.add(textoJuntado);
 
-                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                                                                            getApplicationContext(),
-                                                                            android.R.layout.simple_list_item_1,
-                                                                            itens1);
-                listGastos1.setAdapter(arrayAdapter);
-
-                double aux = Double.parseDouble(total1.getText().toString());
-                aux += Double.parseDouble(editValor1.getText().toString());
-                total1.setText(String.valueOf(aux));
-
-                double totalPago1 = Double.parseDouble(total1.getText().toString());
-                double totalPago2 = Double.parseDouble(total2.getText().toString());
-
-                if(totalPago1 > totalPago2){
-                    resultado.setText(nome2);
-                } else {
-                    resultado.setText(nome1);
-                }
+                Intent intent = new Intent(getApplicationContext(), ListActivity.class);
+                intent.putStringArrayListExtra("Spaceship",listaArray);
+                startActivity(intent);
 
             }
         });
 
 
-        //============== BOTÃO SERVIDOR 2 ========================
-        buttonAdicionar2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String timeStamp = sdf.format(new Date());
-
-                String str = editDescrição2.getText().toString() + " - R$"
-                        + editValor2.getText().toString() + "\n"
-                        + timeStamp;
-                itens2.add(str);
-
-                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                        getApplicationContext(),
-                        android.R.layout.simple_list_item_1,
-                        itens2);
-                listGastos2.setAdapter(arrayAdapter);
-
-                double aux = Double.parseDouble(total2.getText().toString());
-                aux += Double.parseDouble(editValor2.getText().toString());
-                total2.setText(String.valueOf(aux));
-
-                double totalPago1 = Double.parseDouble(total1.getText().toString());
-                double totalPago2 = Double.parseDouble(total2.getText().toString());
-
-                if(totalPago1 > totalPago2){
-                    resultado.setText(nome2);
-                } else {
-                    resultado.setText(nome1);
-                }
-
-            }
-        });*/
     }
 }

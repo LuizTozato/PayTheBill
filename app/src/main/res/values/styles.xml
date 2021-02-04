@@ -7,6 +7,8 @@
         <item name="colorPrimary">@color/colorLightBlue</item>
         <item name="colorPrimaryDark">@color/colorDarkBlue</item>
         <item name="colorAccent">@color/colorLightBlue</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
 
     </style>
 

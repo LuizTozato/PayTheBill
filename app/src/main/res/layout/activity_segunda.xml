@@ -11,23 +11,32 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/colorDarkBlue"
         android:orientation="vertical"
-        android:padding="16dp"
-        >
+        android:padding="16dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:popupTheme="@color/colorLightBlue"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/text_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:errorEnabled="true"
             android:padding="5dp"
+            android:textColorHint="@android:color/darker_gray"
+            app:errorEnabled="true"
             app:hintEnabled="true"
-            app:hintTextColor="@android:color/holo_green_dark"
-            android:textColorHint="@android:color/darker_gray">
+            app:hintTextColor="@android:color/holo_green_dark">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/itemComprado"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Item comprado"
@@ -42,44 +51,46 @@
             android:id="@+id/text_price"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:errorEnabled="true"
-            app:counterEnabled="true"
-            app:counterTextColor="@android:color/white"
-            app:counterMaxLength="5"
             android:padding="5dp"
+            android:textColorHint="@android:color/darker_gray"
+            app:counterEnabled="true"
+            app:counterMaxLength="5"
+            app:counterTextColor="@android:color/white"
+            app:errorEnabled="true"
             app:hintEnabled="true"
-            app:hintTextColor="@android:color/holo_green_dark"
-            android:textColorHint="@android:color/darker_gray">
+            app:hintTextColor="@android:color/holo_green_dark">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/valorCompra"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="R$"
+                android:inputType="numberDecimal"
                 android:textColor="@android:color/white"
-                android:textColorHint="@android:color/white"
-                android:inputType="numberDecimal"/>
+                android:textColorHint="@android:color/white" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/text_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:errorEnabled="true"
-            app:counterEnabled="true"
-            app:counterTextColor="@android:color/white"
-            app:counterMaxLength="10"
             android:padding="5dp"
+            android:textColorHint="@android:color/darker_gray"
+            app:counterEnabled="true"
+            app:counterMaxLength="10"
+            app:counterTextColor="@android:color/white"
+            app:errorEnabled="true"
             app:hintEnabled="true"
-            app:hintTextColor="@android:color/holo_green_dark"
-            android:textColorHint="@android:color/darker_gray">
+            app:hintTextColor="@android:color/holo_green_dark">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/dataCompra"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Date (dd/MM/yyyy)"
+                android:inputType="date"
                 android:textColor="@android:color/white"
-                android:textColorHint="@android:color/white"
-                android:inputType="date"/>
+                android:textColorHint="@android:color/white" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Switch
@@ -87,41 +98,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:text="Switch"
-            android:textColor="@android:color/white"
-            />
+            android:text="Pessoa 1 (referinir em 'Settings')"
+            android:textColor="@android:color/white" />
 
         <Switch
             android:id="@+id/switch2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:text="Switch"
-            android:textColor="@android:color/white"
-            />
+            android:text="Pessoa 2  (referinir em 'Settings')"
+            android:textColor="@android:color/white" />
 
         <Button
+            android:id="@+id/botaoAdicionar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
+            android:background="@android:color/darker_gray"
+            android:padding="10dp"
+            android:textSize="18dp"
             android:text="Adicionar compra"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:background="@android:color/darker_gray">
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1">
 
         </Button>
-
-        <ListView
-            android:id="@+id/lista"
-            style="@style/ListTheme"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/colorLightBlue"
-            android:padding="5dp"
-            android:scrollbars="vertical">
-
-        </ListView>
 
     </LinearLayout>
 </ScrollView>
