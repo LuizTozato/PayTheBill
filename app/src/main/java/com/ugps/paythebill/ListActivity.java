@@ -3,6 +3,7 @@ package com.ugps.paythebill;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -16,6 +17,7 @@ public class ListActivity extends AppCompatActivity {
 
     private FloatingActionButton floatingActionButton;
     private ListView lista;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +27,7 @@ public class ListActivity extends AppCompatActivity {
         //CONECTANDO COM AS ENTIDADES
         lista = findViewById(R.id.lista);
         floatingActionButton = findViewById(R.id.floatingActionButton);
+        sharedPreferences = getSharedPreferences("nomes",MODE_PRIVATE);
 
         //FAB
         floatingActionButton.setOnClickListener(new View.OnClickListener() {

@@ -1,6 +1,7 @@
 package com.ugps.paythebill;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,16 +43,25 @@ public class SegundaActivity extends AppCompatActivity {
         dataCompra =        findViewById(R.id.dataCompra);
         botaoAdicionar =    findViewById(R.id.botaoAdicionar);
 
-        //RECUPERANDO OS DADOS DA INTENT
-        Bundle dados = getIntent().getExtras();
-        if (dados != null) {
-            final String nome1 = dados.getString("nome1");
-            final String nome2 = dados.getString("nome2");
+        //RECUPERANDO CONFIGURAÇÕES / PREFERÊNCIAS
+        SharedPreferences sharedPreferences = getSharedPreferences("nomes",MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        String nome = sharedPreferences.getString("nome1",null);
+        
+        if (nome == null){
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+        }
+
+        //RECEBENDO A INTENT VINDO DAS SETTINGS E RECUPERANDO DADOS DA SHARED PREFERENCES
+        //if (sharedPreferences != null ) {
 
            //SETTANDO NOME DOS SWITCHES
-            switch1.setText(nome1);
-            switch2.setText(nome2);
-        }
+            switch1.setText(sharedPreferences.getString("nome1",null));
+            switch2.setText(sharedPreferences.getString("nome2",null));
+
+        //}
 
         //GARANTINDO UNICO SWITCH ATIVADO
         switch1.setOnClickListener(new View.OnClickListener() {
@@ -62,7 +72,6 @@ public class SegundaActivity extends AppCompatActivity {
                 }
             }
         });
-
         switch2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
