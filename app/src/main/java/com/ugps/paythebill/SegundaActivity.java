@@ -2,6 +2,7 @@ package com.ugps.paythebill;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.textfield.TextInputEditText;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Set;
 
 public class SegundaActivity extends AppCompatActivity {
 
@@ -23,7 +25,7 @@ public class SegundaActivity extends AppCompatActivity {
     private Switch switch1, switch2;
     private TextInputEditText itemComprado, valorCompra, dataCompra;
     private Button botaoAdicionar;
-    private ArrayList<String> listaArray = new ArrayList<String>();
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,24 +46,18 @@ public class SegundaActivity extends AppCompatActivity {
         botaoAdicionar =    findViewById(R.id.botaoAdicionar);
 
         //RECUPERANDO CONFIGURAÇÕES / PREFERÊNCIAS
-        SharedPreferences sharedPreferences = getSharedPreferences("nomes",MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+        sharedPreferences = getSharedPreferences("nomes",MODE_PRIVATE);
 
         String nome = sharedPreferences.getString("nome1",null);
-        
+
         if (nome == null){
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
+        } else {
+            //SETTANDO NOME DOS SWITCHES
+            switch1.setText(sharedPreferences.getString("nome1", null));
+            switch2.setText(sharedPreferences.getString("nome2", null));
         }
-
-        //RECEBENDO A INTENT VINDO DAS SETTINGS E RECUPERANDO DADOS DA SHARED PREFERENCES
-        //if (sharedPreferences != null ) {
-
-           //SETTANDO NOME DOS SWITCHES
-            switch1.setText(sharedPreferences.getString("nome1",null));
-            switch2.setText(sharedPreferences.getString("nome2",null));
-
-        //}
 
         //GARANTINDO UNICO SWITCH ATIVADO
         switch1.setOnClickListener(new View.OnClickListener() {
@@ -105,15 +101,27 @@ public class SegundaActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                String textoJuntado =   itemComprado.getText().toString()+
-                        " R$"+valorCompra.getText().toString()+
-                        " "+dataCompra.getText().toString();
+                String item  = itemComprado.getText().toString();
+                String valor = valorCompra.getText().toString();
+                String data  = dataCompra.getText().toString();
 
-                listaArray.add(textoJuntado);
+                //CRIANDO TABELA NOME(varchar), VALOR (double), DATA (data) no SQLite
+                try{
+                    //CRIANDO O BANCO
+                    SQLiteDatabase bancoDados = openOrCreateDatabase("app",MODE_PRIVATE,null);
+
+                    //CRIANDO E INSERINDO O DADO
+                    bancoDados.execSQL("CREATE TABLE IF NOT EXISTS compras ( nome VARCHAR, valor DOUBLE(6), data DATE ) ");
+                    bancoDados.execSQL("INSERT INTO compras(nome,valor,data) VALUES ('sushi',50, '07-04-2020'  )");
+                    //bancoDados.execSQL("INSERT INTO compras(nome,valor,data) VALUES ("+item+","+valor+","+data+"   )");
+
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
 
                 Intent intent = new Intent(getApplicationContext(), ListActivity.class);
-                intent.putStringArrayListExtra("Spaceship",listaArray);
                 startActivity(intent);
+
 
             }
         });
