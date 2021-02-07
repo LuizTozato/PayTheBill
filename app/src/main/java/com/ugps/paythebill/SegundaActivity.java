@@ -2,7 +2,10 @@ package com.ugps.paythebill;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,11 +13,16 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Switch;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.res.TypedArrayUtils;
+
 import com.google.android.material.textfield.TextInputEditText;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Set;
 
 public class SegundaActivity extends AppCompatActivity {
@@ -36,21 +44,21 @@ public class SegundaActivity extends AppCompatActivity {
         toolbar.inflateMenu(R.menu.menu);
 
         //CONECTANDO OS NOMES ÀS ENTIDADES
-        switch1 =           findViewById(R.id.switch1);
+        switch1 = findViewById(R.id.switch1);
         switch1.setChecked(true);
 
-        switch2 =           findViewById(R.id.switch2);
-        itemComprado =      findViewById(R.id.itemComprado);
-        valorCompra =       findViewById(R.id.valorCompra);
-        dataCompra =        findViewById(R.id.dataCompra);
-        botaoAdicionar =    findViewById(R.id.botaoAdicionar);
+        switch2 = findViewById(R.id.switch2);
+        itemComprado = findViewById(R.id.itemComprado);
+        valorCompra = findViewById(R.id.valorCompra);
+        dataCompra = findViewById(R.id.dataCompra);
+        botaoAdicionar = findViewById(R.id.botaoAdicionar);
 
         //RECUPERANDO CONFIGURAÇÕES / PREFERÊNCIAS
-        sharedPreferences = getSharedPreferences("nomes",MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("nomes", MODE_PRIVATE);
 
-        String nome = sharedPreferences.getString("nome1",null);
+        String nome = sharedPreferences.getString("nome1", null);
 
-        if (nome == null){
+        if (nome == null) {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
         } else {
@@ -63,7 +71,7 @@ public class SegundaActivity extends AppCompatActivity {
         switch1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(switch2.isChecked()){
+                if (switch2.isChecked()) {
                     switch2.setChecked(false); //desliga o outro switch
                 }
             }
@@ -71,7 +79,7 @@ public class SegundaActivity extends AppCompatActivity {
         switch2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(switch1.isChecked()){
+                if (switch1.isChecked()) {
                     switch1.setChecked(false); //desliga o outro switch
                 }
             }
@@ -101,21 +109,21 @@ public class SegundaActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                String item  = itemComprado.getText().toString();
+                String item = itemComprado.getText().toString();
                 String valor = valorCompra.getText().toString();
-                String data  = dataCompra.getText().toString();
+                String data = dataCompra.getText().toString();
 
                 //CRIANDO TABELA NOME(varchar), VALOR (double), DATA (data) no SQLite
-                try{
-                    //CRIANDO O BANCO
-                    SQLiteDatabase bancoDados = openOrCreateDatabase("app",MODE_PRIVATE,null);
+                try {
 
-                    //CRIANDO E INSERINDO O DADO
-                    bancoDados.execSQL("CREATE TABLE IF NOT EXISTS compras ( nome VARCHAR, valor DOUBLE(6), data DATE ) ");
-                    bancoDados.execSQL("INSERT INTO compras(nome,valor,data) VALUES ('sushi',50, '07-04-2020'  )");
-                    //bancoDados.execSQL("INSERT INTO compras(nome,valor,data) VALUES ("+item+","+valor+","+data+"   )");
+                    SQLiteDatabase bancoDados = Database.openDB(getApplicationContext());
 
-                } catch (Exception e){
+                    SQLiteStatement stmt = bancoDados.compileStatement("INSERT INTO compras(nome,valor,data) VALUES (?,?,?)");
+                    stmt.bindAllArgsAsStrings(new String[]{item, valor, data});
+                    stmt.execute();
+
+
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 

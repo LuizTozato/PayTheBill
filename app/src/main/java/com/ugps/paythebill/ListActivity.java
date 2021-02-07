@@ -49,7 +49,7 @@ public class ListActivity extends AppCompatActivity {
 
         //RECUPERANDO OS DADOS DO SQLite
         try {
-            SQLiteDatabase bancoDados = openOrCreateDatabase("app", MODE_PRIVATE, null);
+            SQLiteDatabase bancoDados = Database.openDB(getApplicationContext());
             Cursor cursor = bancoDados.rawQuery("SELECT nome,valor,data FROM compras", null);
 
             //INDICES DA TABELA
@@ -58,8 +58,9 @@ public class ListActivity extends AppCompatActivity {
             int indiceValor = cursor.getColumnIndex("valor");
             int indiceData = cursor.getColumnIndex("data");
 
-            cursor.moveToFirst(); //posicionar o cursor o inicio da tabela
-            while (cursor != null) {
+            //posicionar o cursor o inicio da tabela
+            while (cursor.moveToNext()) {
+
                 String item = cursor.getString(indiceNome);
                 String valor = cursor.getString(indiceValor);
                 String data = cursor.getString(indiceData);
@@ -68,8 +69,9 @@ public class ListActivity extends AppCompatActivity {
                 System.out.println("Texto juntado: " + textoJuntado);
                 listaArray.add(textoJuntado);
 
-                cursor.moveToNext();
             }
+
+            cursor.close();
 
         } catch (Exception e){
             System.out.println("CAIU NA EXCEÇÃO DO BD NA ACTIVITY ListActivity!!!");
