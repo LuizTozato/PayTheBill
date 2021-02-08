@@ -1,29 +1,25 @@
-package com.ugps.paythebill;
+package com.ugps.paythebill.Principais;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.res.TypedArrayUtils;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.ugps.paythebill.BancoDeDados.Database;
+import com.ugps.paythebill.R;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Set;
+import java.util.Date;
 
 public class SegundaActivity extends AppCompatActivity {
 
@@ -112,14 +108,25 @@ public class SegundaActivity extends AppCompatActivity {
                 String item = itemComprado.getText().toString();
                 String valor = valorCompra.getText().toString();
                 String data = dataCompra.getText().toString();
+                if(!inputDateChecker(data)){
+                    Toast.makeText(getApplicationContext(),"A data deve ter o formato dd-MM-aaaa.\n Não use barras, use -",Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                String comprador;
+                if(switch1.isChecked()){
+                    comprador = switch1.getText().toString();
+                } else {
+                    comprador = switch2.getText().toString();
+                }
 
                 //CRIANDO TABELA NOME(varchar), VALOR (double), DATA (data) no SQLite
                 try {
 
                     SQLiteDatabase bancoDados = Database.openDB(getApplicationContext());
 
-                    SQLiteStatement stmt = bancoDados.compileStatement("INSERT INTO compras(nome,valor,data) VALUES (?,?,?)");
-                    stmt.bindAllArgsAsStrings(new String[]{item, valor, data});
+                    SQLiteStatement stmt = bancoDados.compileStatement("INSERT INTO compras(nome,valor,data,comprador) VALUES (?,?,?,?)");
+                    stmt.bindAllArgsAsStrings(new String[] {item, valor, data,comprador});
                     stmt.execute();
 
 
@@ -133,7 +140,18 @@ public class SegundaActivity extends AppCompatActivity {
 
             }
         });
-
-
     }
+
+    private boolean inputDateChecker(String data){
+
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+            Date date = format.parse(data);
+        } catch (Exception e) {
+            return false;
+        }
+
+        return true;
+    };
+
 }

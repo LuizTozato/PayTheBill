@@ -1,4 +1,4 @@
-package com.ugps.paythebill;
+package com.ugps.paythebill.BancoDeDados;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -18,7 +18,7 @@ public class Database {
                 @Override
                 public void onCreate(SQLiteDatabase bancoDados) {
                     //CRIANDO E INSERINDO O DADO
-                    bancoDados.execSQL("CREATE TABLE IF NOT EXISTS compras ( nome VARCHAR, valor DOUBLE(6), data DATE ) ");
+                    bancoDados.execSQL("CREATE TABLE IF NOT EXISTS compras ( nome VARCHAR, valor DOUBLE(6), data DATE, comprador VARCHAR ) ");
                 }
 
                 @Override
