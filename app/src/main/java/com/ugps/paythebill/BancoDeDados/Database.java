@@ -3,12 +3,16 @@ package com.ugps.paythebill.BancoDeDados;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
+
+import java.util.Date;
 
 public class Database {
 
     //CRIANDO O AJUDANTE
     private static SQLiteOpenHelper helper = null;
 
+    //ABRIR / CRIAR O BD
     public static SQLiteDatabase openDB(Context context) {
 
         //AQUI ESTOU CRIANDO O BANCO SE ELE AINDA NÃO EXISTE
@@ -31,4 +35,31 @@ public class Database {
         //AQUI ESTOU ABRINDO O BANCO
         return helper.getWritableDatabase();
     }
+
+    //========================= ADICIONAR VALOR =========================
+    public static void addValueBD (Context context, String item, String valor, String data, String comprador) {
+
+        try {
+            SQLiteStatement stmt = openDB(context).compileStatement("INSERT INTO compras(nome,valor,data,comprador) VALUES (?,?,?,?)");
+            stmt.bindAllArgsAsStrings(new String[]{item, valor, data, comprador});
+            stmt.execute();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //========================= REMOVER VALOR =========================
+    public static void removeValueBD (Context context, String item, String valor, String data, String comprador) {
+
+        try {
+            SQLiteStatement stmt = openDB(context).compileStatement("DELETE FROM compras WHERE (nome = ? AND valor = ? AND data = ? AND comprador = ?)");
+            stmt.bindAllArgsAsStrings(new String[]{item, valor, data, comprador});
+            stmt.execute();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

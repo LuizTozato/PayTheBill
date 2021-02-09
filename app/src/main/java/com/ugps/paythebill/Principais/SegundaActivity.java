@@ -120,19 +120,11 @@ public class SegundaActivity extends AppCompatActivity {
                     comprador = switch2.getText().toString();
                 }
 
-                //CRIANDO TABELA NOME(varchar), VALOR (double), DATA (data) no SQLite
-                try {
+                //acessando o BD
+                SQLiteDatabase bancoDados = Database.openDB(getApplicationContext());
 
-                    SQLiteDatabase bancoDados = Database.openDB(getApplicationContext());
-
-                    SQLiteStatement stmt = bancoDados.compileStatement("INSERT INTO compras(nome,valor,data,comprador) VALUES (?,?,?,?)");
-                    stmt.bindAllArgsAsStrings(new String[] {item, valor, data,comprador});
-                    stmt.execute();
-
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                //adicionando valor ao BD
+                Database.addValueBD(getApplicationContext(),item,valor,data,comprador);
 
                 Intent intent = new Intent(getApplicationContext(), ListActivity.class);
                 startActivity(intent);
