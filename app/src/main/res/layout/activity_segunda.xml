@@ -18,12 +18,14 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
+            app:title="Pay the Bill"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
-            app:popupTheme="@color/colorLightBlue"/>
+            android:layout_marginBottom="20dp"
+            />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/text_item"
@@ -40,7 +42,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Item comprado"
-                android:inputType="text"
+                android:inputType="textCapWords"
                 android:textColor="@android:color/white"
                 android:textColorHighlight="@android:color/white"
                 android:textColorHint="@android:color/white"

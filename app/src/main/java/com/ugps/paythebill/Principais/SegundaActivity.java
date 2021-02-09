@@ -5,9 +5,11 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -19,6 +21,8 @@ import com.ugps.paythebill.BancoDeDados.Database;
 import com.ugps.paythebill.R;
 
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 
 public class SegundaActivity extends AppCompatActivity {
@@ -36,7 +40,6 @@ public class SegundaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_segunda);
         toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("Pay the Bill");
         toolbar.inflateMenu(R.menu.menu);
 
         //CONECTANDO OS NOMES ÀS ENTIDADES
@@ -109,7 +112,7 @@ public class SegundaActivity extends AppCompatActivity {
                 String valor = valorCompra.getText().toString();
                 String data = dataCompra.getText().toString();
                 if(!inputDateChecker(data)){
-                    Toast.makeText(getApplicationContext(),"A data deve ter o formato dd-MM-aaaa.\n Não use barras, use -",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"Data inválida. \n A data deve ter o formato dd-MM-aaaa.\n Não use barras, use -. \n Não usei data futura.",Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -136,10 +139,23 @@ public class SegundaActivity extends AppCompatActivity {
 
     private boolean inputDateChecker(String data){
 
+        Date date;
+
         try {
             SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-            Date date = format.parse(data);
+            date = format.parse(data);
         } catch (Exception e) {
+            return false;
+        }
+
+        Date today = new Date();
+
+        String[] dataSplit = data.split("-");
+        Integer dia = Integer.valueOf(dataSplit[0]);
+        Integer mes = Integer.valueOf(dataSplit[1]);
+        Integer ano = Integer.valueOf(dataSplit[2]);
+
+        if ( dia > 31 || mes > 12 || date.compareTo(today) > 0 ){
             return false;
         }
 

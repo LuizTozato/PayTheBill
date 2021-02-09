@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Ex: João"
-        android:inputType="textShortMessage|text"
+        android:inputType="textCapWords"
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/darker_gray"
         app:layout_constraintBaseline_toBaselineOf="@+id/textView3"
@@ -47,7 +47,7 @@
         android:ems="10"
         android:hint="Ex: Maria"
         android:textColorHint="@android:color/darker_gray"
-        android:inputType="textShortMessage"
+        android:inputType="textCapWords"
         app:layout_constraintBaseline_toBaselineOf="@+id/textView4"
         app:layout_constraintStart_toEndOf="@+id/textView4"
         android:textColor="@android:color/white"/>
