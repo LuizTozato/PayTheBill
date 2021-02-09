@@ -32,7 +32,7 @@ public class SegundaActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private Switch switch1, switch2;
     private TextInputEditText itemComprado, valorCompra, dataCompra;
-    private Button botaoAdicionar;
+    private Button botaoAdicionar,botaoVoltar;
     SharedPreferences sharedPreferences;
 
     @Override
@@ -51,6 +51,7 @@ public class SegundaActivity extends AppCompatActivity {
         valorCompra = findViewById(R.id.valorCompra);
         dataCompra = findViewById(R.id.dataCompra);
         botaoAdicionar = findViewById(R.id.botaoAdicionar);
+        botaoVoltar = findViewById(R.id.botaoVoltar);
 
         //RECUPERANDO CONFIGURAÇÕES / PREFERÊNCIAS
         sharedPreferences = getSharedPreferences("nomes", MODE_PRIVATE);
@@ -135,6 +136,19 @@ public class SegundaActivity extends AppCompatActivity {
 
             }
         });
+        
+        botaoVoltar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //Montando pacote de comando
+                Intent intent = new Intent(getApplicationContext(), ListActivity.class);
+
+                //iniciando outra activity passando origem e destino
+                startActivity(intent);
+            }
+        });
+
     }
 
     private boolean inputDateChecker(String data){

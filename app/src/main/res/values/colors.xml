@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorDarkBlue">#091F55</color>
-    <color name="colorLightBlue">#003CAB</color>
+    <color name="colorLightBlue">#184BA9</color>
+    <color name="colorSuperLightBlue">#357AF9</color>
+    <color name="colorJeans">#CD2C374B</color>
 </resources>

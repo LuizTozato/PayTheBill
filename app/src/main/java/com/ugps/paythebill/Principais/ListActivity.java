@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -30,9 +31,11 @@ import java.util.Date;
 
 public class ListActivity extends AppCompatActivity {
 
+    private TextView textNome1,textNome2,textValor1,textValor2,textFinal;
     private FloatingActionButton floatingActionButton;
     private ListView lista;
     private ArrayList<ItemComprado> listaArray = new ArrayList<>();
+    SharedPreferences sharedPreferences;
 
 
     @Override
@@ -43,8 +46,16 @@ public class ListActivity extends AppCompatActivity {
         //CONECTANDO COM AS ENTIDADES
         lista = findViewById(R.id.lista);
         floatingActionButton = findViewById(R.id.floatingActionButton);
+        textNome1  = findViewById(R.id.textNome1);
+        textNome2  = findViewById(R.id.textNome2);
+        textValor1 = findViewById(R.id.textValor1);
+        textValor2 = findViewById(R.id.textValor2);
+        textFinal  = findViewById(R.id.textFinal);
 
-        //FAB
+        //RECUPERANDO CONFIGURAÇÕES / PREFERÊNCIAS =================================================
+        sharedPreferences = getSharedPreferences("nomes", MODE_PRIVATE);
+
+        //FAB ======================================================================================
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,10 +69,10 @@ public class ListActivity extends AppCompatActivity {
             }
         });
 
-        //CHAMAR FUNÇÃO DE CARREGAMENTO DE DADOS DO BD
-        carregarDados();
+        //CHAMAR FUNÇÃO DE CARREGAMENTO DE DADOS DO BD =============================================
+        carregarDadosNaListView();
 
-        //============================= EVENTOS DE CLIQUE =============================================
+        //EVENTOS DE CLIQUE ========================================================================
         lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -71,13 +82,21 @@ public class ListActivity extends AppCompatActivity {
 
             }
         });
+
+        //CARREGAR SHAREDPREFERENCES ===============================================================
+        carregarSharedPreferences();
+
+        //LER O BD PARA SABER QUANTO CADA UM GASTOU ================================================
+        lerBDeSettarValoresTotais();
+
     }
+
+
 
 
     // FUNÇÕES EXTERNAS AO ONCREATE
 
-    //==================== CARREGAR DADOS DO BD E SETTAR NA LISTVIEW ========================
-    public void carregarDados(){
+    public void carregarDadosNaListView(){
         //RECUPERANDO OS DADOS DO SQLite
         try {
             SQLiteDatabase bancoDados = Database.openDB(getApplicationContext());
@@ -134,7 +153,6 @@ public class ListActivity extends AppCompatActivity {
         lista.setAdapter(arrayAdapter);
     }
 
-    //=========== POPUP QUE PERGUNTA SE QUER EXCLUIR ITEM DA LISTA ==================
     public void dialogCall(AdapterView<?> parent, View view, final int position, long id){
 
         //Instanciando o AlertDialog - usar o contexto dessa activity (this) e não o global (getAplicationContext)
@@ -178,13 +196,63 @@ public class ListActivity extends AppCompatActivity {
         dialog.create();
         dialog.show();
     }
+
+    private void carregarSharedPreferences() {
+
+        textNome1.setText(sharedPreferences.getString("nome1", null));
+        textNome2.setText(sharedPreferences.getString("nome2", null));
+
+    }
+
+    private void lerBDeSettarValoresTotais() {
+
+        String nome1 = sharedPreferences.getString("nome1", null);
+        String nome2 = sharedPreferences.getString("nome2", null);
+
+        try {
+            SQLiteDatabase bancoDados = Database.openDB(getApplicationContext());
+            Cursor cursor = bancoDados.rawQuery("SELECT valor FROM compras WHERE comprador = '"+nome1+"' ", null);
+
+            //INDICES DA TABELA
+            int indiceValor = cursor.getColumnIndex("valor");
+
+            Double valor1 = 0.0;
+
+            //posicionar o cursor o inicio da tabela
+            while (cursor.moveToNext()) {
+                valor1 += cursor.getDouble(indiceValor);
+            }
+            cursor.close();
+
+            textValor1.setText(String.valueOf(valor1));
+
+            //===============================================
+            cursor = bancoDados.rawQuery("SELECT valor FROM compras WHERE comprador = '"+nome2+"' ", null);
+
+            Double valor2 = 0.0;
+
+            //posicionar o cursor o inicio da tabela
+            while (cursor.moveToNext()) {
+                valor2 += cursor.getDouble(indiceValor);
+            }
+            cursor.close();
+
+            textValor2.setText(String.valueOf(valor2));
+
+            // FINAL ===============================================
+            if( valor1 > valor2 ){
+                textFinal.setText(nome2);
+            } else {
+                textFinal.setText(nome1);
+            }
+
+
+        } catch (Exception e){
+            System.out.println("CAIU NA EXCEÇÃO da leitura do quanto cada um gastou!!!");
+            e.printStackTrace();
+        }
+
+
+    }
+
 }
-
-
-
-
-
-
-
-
-
