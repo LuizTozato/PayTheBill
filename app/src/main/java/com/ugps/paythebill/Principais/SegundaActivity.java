@@ -2,9 +2,12 @@ package com.ugps.paythebill.Principais;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.format.DateUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +19,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.github.rtoshiro.util.format.SimpleMaskFormatter;
+import com.github.rtoshiro.util.format.text.MaskTextWatcher;
 import com.google.android.material.textfield.TextInputEditText;
 import com.ugps.paythebill.BancoDeDados.Database;
 import com.ugps.paythebill.R;
@@ -24,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class SegundaActivity extends AppCompatActivity {
 
@@ -103,6 +109,11 @@ public class SegundaActivity extends AppCompatActivity {
                 }
             }
         });
+
+        //MASCARA DE DATA - github.com/rtoshiro
+        SimpleMaskFormatter simpleMaskFormatter = new SimpleMaskFormatter("NN-NN-NNNN");
+        MaskTextWatcher maskTextWatcher = new MaskTextWatcher(dataCompra,simpleMaskFormatter);
+        dataCompra.addTextChangedListener(maskTextWatcher);
 
         //============================ COLOCANDO VALORES NA LISTA ============================
         botaoAdicionar.setOnClickListener(new View.OnClickListener() {

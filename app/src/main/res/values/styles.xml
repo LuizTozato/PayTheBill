@@ -15,7 +15,6 @@
     <style
         name="ListTheme"
         parent="@android:style/Widget.ListView">
-
         <item name="android:textColor">@android:color/white</item>
         <item name="android:typeface">sans</item>
 

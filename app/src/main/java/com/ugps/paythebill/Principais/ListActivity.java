@@ -1,5 +1,6 @@
 package com.ugps.paythebill.Principais;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -143,8 +144,10 @@ public class ListActivity extends AppCompatActivity {
                 //linha de cima do layout duplo
                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
                 text1.setText(listaArray.get(position).getNome() + " - R$" + listaArray.get(position).getValor().toString() + " em: " + sdf.format(listaArray.get(position).getData()));
+                text1.setTextColor(getResources().getColor(R.color.white));
                 //linha de baixo do layout duplo
                 text2.setText(listaArray.get(position).getComprador());
+                text2.setTextColor(getResources().getColor(R.color.white));
 
                 return view;
             }

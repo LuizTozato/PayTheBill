@@ -92,7 +92,8 @@
                 android:hint="Date (dd-MM-yyyy)"
                 android:inputType="date"
                 android:textColor="@android:color/white"
-                android:textColorHint="@android:color/white" />
+                android:textColorHint="@android:color/white"
+                />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Switch

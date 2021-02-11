@@ -26,6 +26,7 @@
             android:padding="5dp"
             android:text="Compras realizadas"
             android:textSize="26dp"
+            android:textColor="@android:color/white"
             android:textStyle="italic" />
 
         <LinearLayout
@@ -148,7 +149,8 @@
             android:layout_marginEnd="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="20dp"
-            android:background="@color/colorLightBlue" />
+            android:background="@color/colorLightBlue"
+            />
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
