@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "224725850034",
+    "firebase_url": "https://paythebill-ab624-default-rtdb.firebaseio.com",
+    "project_id": "paythebill-ab624",
+    "storage_bucket": "paythebill-ab624.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:224725850034:android:d6c19915899523e155b6ab",
+        "android_client_info": {
+          "package_name": "com.ugps.paythebill"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "224725850034-o42hnmodg2ofvg3lh1sh9ohklee16dod.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ugps.paythebill",
+            "certificate_hash": "a2ce5eef369ab22dda53c0c966b4ec578f28d9e6"
+          }
+        },
+        {
+          "client_id": "224725850034-tqpk28ian3ftj4p6b3p4mhera2u7nvrc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUV9Dsk-j4SZCLKVFs9jjVBEr2VAbzu1w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "224725850034-tqpk28ian3ftj4p6b3p4mhera2u7nvrc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

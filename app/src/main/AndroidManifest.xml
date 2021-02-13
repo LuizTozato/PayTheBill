@@ -20,12 +20,12 @@
         </activity>
 
         <activity
-            android:name=".Principais.SegundaActivity"
+            android:name=".Principais.AdicionarItemActivity"
             android:screenOrientation="portrait">
         </activity>
 
         <activity
-            android:name=".Principais.MainActivity"
+            android:name=".Principais.ConfiguracoesActivity"
             android:screenOrientation="portrait">
         </activity>
     </application>

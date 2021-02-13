@@ -1,19 +1,15 @@
 package com.ugps.paythebill.Principais;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -22,7 +18,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.ugps.paythebill.BancoDeDados.Database;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.ugps.paythebill.BancoDeDados.MySQLiteDatabase;
+import com.ugps.paythebill.Firebase.FirebaseClass;
 import com.ugps.paythebill.Objetos.ItemComprado;
 import com.ugps.paythebill.R;
 
@@ -37,7 +37,6 @@ public class ListActivity extends AppCompatActivity {
     private ListView lista;
     private ArrayList<ItemComprado> listaArray = new ArrayList<>();
     SharedPreferences sharedPreferences;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +61,7 @@ public class ListActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 //Montando pacote de comando
-                Intent intent = new Intent(getApplicationContext(), SegundaActivity.class);
+                Intent intent = new Intent(getApplicationContext(), AdicionarItemActivity.class);
 
                 //iniciando outra activity passando origem e destino
                 startActivity(intent);
@@ -100,7 +99,7 @@ public class ListActivity extends AppCompatActivity {
     public void carregarDadosNaListView(){
         //RECUPERANDO OS DADOS DO SQLite
         try {
-            SQLiteDatabase bancoDados = Database.openDB(getApplicationContext());
+            android.database.sqlite.SQLiteDatabase bancoDados = MySQLiteDatabase.openDB(getApplicationContext());
             Cursor cursor = bancoDados.rawQuery("SELECT nome,valor,data,comprador FROM compras", null);
 
             //INDICES DA TABELA
@@ -179,7 +178,7 @@ public class ListActivity extends AppCompatActivity {
             String data = sdf.format(itemSelecionado.getData());
             String comprador = itemSelecionado.getComprador();
 
-            Database.removeValueBD(getApplicationContext(),item,valor,data,comprador);
+            MySQLiteDatabase.removeValueBD(getApplicationContext(),item,valor,data,comprador);
 
             //recarregar a activity
             finish();
@@ -213,7 +212,7 @@ public class ListActivity extends AppCompatActivity {
         String nome2 = sharedPreferences.getString("nome2", null);
 
         try {
-            SQLiteDatabase bancoDados = Database.openDB(getApplicationContext());
+            android.database.sqlite.SQLiteDatabase bancoDados = MySQLiteDatabase.openDB(getApplicationContext());
             Cursor cursor = bancoDados.rawQuery("SELECT valor FROM compras WHERE comprador = '"+nome1+"' ", null);
 
             //INDICES DA TABELA
