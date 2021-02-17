@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,8 +20,11 @@ import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.ugps.paythebill.BancoDeDados.MySQLiteDatabase;
 import com.ugps.paythebill.Firebase.FirebaseClass;
 import com.ugps.paythebill.Objetos.ItemComprado;
@@ -37,6 +41,7 @@ public class ListActivity extends AppCompatActivity {
     private ListView lista;
     private ArrayList<ItemComprado> listaArray = new ArrayList<>();
     SharedPreferences sharedPreferences;
+    private final FirebaseClass firebaseClass = new FirebaseClass();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +104,44 @@ public class ListActivity extends AppCompatActivity {
     public void carregarDadosNaListView(){
         //RECUPERANDO OS DADOS DO SQLite
         try {
+            //MÉTODO USANDO FIREBASE
+            firebaseClass.getItens().addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot ds : snapshot.getChildren()) {
+                        ItemComprado ic = ds.getValue(ItemComprado.class);
+                        listaArray.add(ic);
+                    }
+
+                    ArrayAdapter arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_2, android.R.id.text1, listaArray) {
+                        @NonNull
+                        @Override
+                        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                            View view = super.getView(position, convertView, parent);
+                            TextView text1 = view.findViewById(android.R.id.text1);
+                            TextView text2 = view.findViewById(android.R.id.text2);
+
+                            //linha de cima do layout duplo
+                            text1.setText(listaArray.get(position).getNome() + " - R$" + listaArray.get(position).getValor().toString() + " em: " + listaArray.get(position).getData());
+                            text1.setTextColor(getResources().getColor(R.color.white));
+                            //linha de baixo do layout duplo
+                            text2.setText(listaArray.get(position).getComprador());
+                            text2.setTextColor(getResources().getColor(R.color.white));
+
+                            return view;
+                        }
+                    };
+
+                    lista.setAdapter(arrayAdapter);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    System.out.println("ERRO meuuu: " + error.getDetails());
+                }
+            });
+
+            /* MÉTODO USANDO SQLite
             android.database.sqlite.SQLiteDatabase bancoDados = MySQLiteDatabase.openDB(getApplicationContext());
             Cursor cursor = bancoDados.rawQuery("SELECT nome,valor,data,comprador FROM compras", null);
 
@@ -126,33 +169,12 @@ public class ListActivity extends AppCompatActivity {
             }
 
             cursor.close();
-
+            */
         } catch (Exception e){
             System.out.println("CAIU NA EXCEÇÃO DO BD NA ACTIVITY ListActivity!!!");
             e.printStackTrace();
         }
 
-        ArrayAdapter arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_2, android.R.id.text1, listaArray){
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView text1 = view.findViewById(android.R.id.text1);
-                TextView text2 = view.findViewById(android.R.id.text2);
-
-                //linha de cima do layout duplo
-                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-                text1.setText(listaArray.get(position).getNome() + " - R$" + listaArray.get(position).getValor().toString() + " em: " + sdf.format(listaArray.get(position).getData()));
-                text1.setTextColor(getResources().getColor(R.color.white));
-                //linha de baixo do layout duplo
-                text2.setText(listaArray.get(position).getComprador());
-                text2.setTextColor(getResources().getColor(R.color.white));
-
-                return view;
-            }
-        };
-
-        lista.setAdapter(arrayAdapter);
     }
 
     public void dialogCall(AdapterView<?> parent, View view, final int position, long id){

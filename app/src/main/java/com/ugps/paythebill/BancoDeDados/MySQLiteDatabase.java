@@ -13,21 +13,20 @@ public class MySQLiteDatabase {
     private static SQLiteOpenHelper helper = null;
 
     //ABRIR / CRIAR O BD
-    public static android.database.sqlite.SQLiteDatabase openDB(Context context) {
+    public static SQLiteDatabase openDB(Context context) {
 
         //AQUI ESTOU CRIANDO O BANCO SE ELE AINDA NÃO EXISTE
         if (helper == null) {
             //ISSO É UM SINGLETON (a variável helper)
             helper = new SQLiteOpenHelper(context, "app", null, 1) {
                 @Override
-                public void onCreate(android.database.sqlite.SQLiteDatabase bancoDados) {
+                public void onCreate(SQLiteDatabase bancoDados) {
                     //CRIANDO E INSERINDO O DADO
                     bancoDados.execSQL("CREATE TABLE IF NOT EXISTS compras ( nome VARCHAR, valor DOUBLE(6), data DATE, comprador VARCHAR ) ");
                 }
 
                 @Override
                 public void onUpgrade(android.database.sqlite.SQLiteDatabase db, int oldVersion, int newVersion) {
-
                 }
             };
         }

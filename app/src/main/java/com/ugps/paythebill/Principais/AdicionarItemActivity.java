@@ -2,6 +2,7 @@ package com.ugps.paythebill.Principais;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,8 +17,11 @@ import com.github.rtoshiro.util.format.SimpleMaskFormatter;
 import com.github.rtoshiro.util.format.text.MaskTextWatcher;
 import com.google.android.material.textfield.TextInputEditText;
 import com.ugps.paythebill.BancoDeDados.MySQLiteDatabase;
+import com.ugps.paythebill.Firebase.FirebaseClass;
+import com.ugps.paythebill.Objetos.ItemComprado;
 import com.ugps.paythebill.R;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -30,6 +34,8 @@ public class AdicionarItemActivity extends AppCompatActivity {
     private TextInputEditText itemComprado, valorCompra, dataCompra;
     private Button botaoAdicionar,botaoVoltar;
     SharedPreferences sharedPreferences;
+    private final FirebaseClass firebaseClass = new FirebaseClass();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,11 +116,12 @@ public class AdicionarItemActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                String item = itemComprado.getText().toString();
-                String valor = valorCompra.getText().toString();
+                String nome = itemComprado.getText().toString();
+                Double valor = Double.parseDouble(valorCompra.getText().toString());
                 String data = dataCompra.getText().toString();
+
                 if(!inputDateChecker(data)){
-                    Toast.makeText(getApplicationContext(),"Data inválida. \n A data deve ter o formato dd-MM-aaaa.\n Não use barras, use -. \n Não usei data futura.",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"Data inválida.",Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -125,11 +132,15 @@ public class AdicionarItemActivity extends AppCompatActivity {
                     comprador = switch2.getText().toString();
                 }
 
-                //acessando o BD
-                android.database.sqlite.SQLiteDatabase bancoDados = MySQLiteDatabase.openDB(getApplicationContext());
+                //Acessando o firebase para guardar as informações do item
+                ItemComprado itemComprado = new ItemComprado(nome,valor,data,comprador);
+                firebaseClass.getItens().push().setValue(itemComprado);
 
+                /*acessando o BD - SQLite
+                SQLiteDatabase bancoDados = MySQLiteDatabase.openDB(getApplicationContext());
                 //adicionando valor ao BD
                 MySQLiteDatabase.addValueBD(getApplicationContext(),item,valor,data,comprador);
+                */
 
                 Intent intent = new Intent(getApplicationContext(), ListActivity.class);
                 startActivity(intent);
@@ -157,8 +168,8 @@ public class AdicionarItemActivity extends AppCompatActivity {
         Date date;
 
         try {
-            SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-            date = format.parse(data);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            date = simpleDateFormat.parse(data);
         } catch (Exception e) {
             return false;
         }
