@@ -24,6 +24,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.ugps.paythebill.BancoDeDados.MySQLiteDatabase;
 import com.ugps.paythebill.Firebase.FirebaseClass;
@@ -102,78 +103,43 @@ public class ListActivity extends AppCompatActivity {
     // FUNÇÕES EXTERNAS AO ONCREATE
 
     public void carregarDadosNaListView(){
-        //RECUPERANDO OS DADOS DO SQLite
-        try {
-            //MÉTODO USANDO FIREBASE
-            firebaseClass.getItens().addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for (DataSnapshot ds : snapshot.getChildren()) {
-                        ItemComprado ic = ds.getValue(ItemComprado.class);
-                        listaArray.add(ic);
+
+        //MÉTODO USANDO FIREBASE
+        firebaseClass.getItens().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    ItemComprado ic = ds.getValue(ItemComprado.class);
+                    listaArray.add(ic);
+                }
+
+                ArrayAdapter arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_2, android.R.id.text1, listaArray) {
+                    @NonNull
+                    @Override
+                    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                        View view = super.getView(position, convertView, parent);
+                        TextView text1 = view.findViewById(android.R.id.text1);
+                        TextView text2 = view.findViewById(android.R.id.text2);
+
+                        //linha de cima do layout duplo
+                        text1.setText(listaArray.get(position).getNome() + " - R$" + listaArray.get(position).getValor().toString() + " em: " + listaArray.get(position).getData());
+                        text1.setTextColor(getResources().getColor(R.color.white));
+                        //linha de baixo do layout duplo
+                        text2.setText(listaArray.get(position).getComprador());
+                        text2.setTextColor(getResources().getColor(R.color.white));
+
+                        return view;
                     }
+                };
 
-                    ArrayAdapter arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_2, android.R.id.text1, listaArray) {
-                        @NonNull
-                        @Override
-                        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                            View view = super.getView(position, convertView, parent);
-                            TextView text1 = view.findViewById(android.R.id.text1);
-                            TextView text2 = view.findViewById(android.R.id.text2);
-
-                            //linha de cima do layout duplo
-                            text1.setText(listaArray.get(position).getNome() + " - R$" + listaArray.get(position).getValor().toString() + " em: " + listaArray.get(position).getData());
-                            text1.setTextColor(getResources().getColor(R.color.white));
-                            //linha de baixo do layout duplo
-                            text2.setText(listaArray.get(position).getComprador());
-                            text2.setTextColor(getResources().getColor(R.color.white));
-
-                            return view;
-                        }
-                    };
-
-                    lista.setAdapter(arrayAdapter);
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    System.out.println("ERRO meuuu: " + error.getDetails());
-                }
-            });
-
-            /* MÉTODO USANDO SQLite
-            android.database.sqlite.SQLiteDatabase bancoDados = MySQLiteDatabase.openDB(getApplicationContext());
-            Cursor cursor = bancoDados.rawQuery("SELECT nome,valor,data,comprador FROM compras", null);
-
-            //INDICES DA TABELA
-            int indiceNome = cursor.getColumnIndex("nome");
-            int indiceValor = cursor.getColumnIndex("valor");
-            int indiceData = cursor.getColumnIndex("data");
-            int indiceComprador = cursor.getColumnIndex("comprador");
-
-            //posicionar o cursor o inicio da tabela
-            while (cursor.moveToNext()) {
-
-                String item = cursor.getString(indiceNome);
-                Double valor = cursor.getDouble(indiceValor);
-
-                String dataString =  cursor.getString(indiceData);
-                SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-                Date data = format.parse(dataString);
-
-                String comprador = cursor.getString(indiceComprador);
-
-                ItemComprado itemComprado = new ItemComprado(item,valor,data,comprador);
-
-                listaArray.add(itemComprado);
+                lista.setAdapter(arrayAdapter);
             }
 
-            cursor.close();
-            */
-        } catch (Exception e){
-            System.out.println("CAIU NA EXCEÇÃO DO BD NA ACTIVITY ListActivity!!!");
-            e.printStackTrace();
-        }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                System.out.println("ERRO meuuu: " + error.getDetails());
+            }
+        });
 
     }
 
@@ -186,27 +152,36 @@ public class ListActivity extends AppCompatActivity {
         dialog.setTitle("Exclusão de compra");
         dialog.setMessage("Deseja excluir esta compra realizada?");
 
-        //Configura ações para "sim" e "não"
+        //Configura as ações para "sim" e "não"
         //SIM
         dialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //PRECISO PROCURAR VIA QUERY ONDE ESTÁ O QUE EU QUERO DELETAR
+                    String nomeDaCompra = listaArray.get(position).getNome();
+                    Query busca = firebaseClass.getItens().orderByChild("nome").equalTo(nomeDaCompra);
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                    busca.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for(DataSnapshot dadoEncontrado: snapshot.getChildren()){
+                                dadoEncontrado.getRef().removeValue();
+                            }
 
-            ItemComprado itemSelecionado = listaArray.get(position);
-            String item = itemSelecionado.getNome();
-            String valor = itemSelecionado.getValor().toString();
-            String data = sdf.format(itemSelecionado.getData());
-            String comprador = itemSelecionado.getComprador();
+                            //Retira da ArrayList o item que cliquei
+                            listaArray.remove(position);
 
-            MySQLiteDatabase.removeValueBD(getApplicationContext(),item,valor,data,comprador);
+                            finish();
+                            startActivity(getIntent());
+                        }
 
-            //recarregar a activity
-            finish();
-            startActivity(getIntent());
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                        }
+                    });
 
-            }
+
+                }
         });
 
         //NÃO
@@ -219,6 +194,7 @@ public class ListActivity extends AppCompatActivity {
         //Criar e exibir a AlertDialog
         dialog.create();
         dialog.show();
+
     }
 
     private void carregarSharedPreferences() {
