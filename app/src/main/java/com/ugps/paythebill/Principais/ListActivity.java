@@ -75,7 +75,7 @@ public class ListActivity extends AppCompatActivity {
             }
         });
 
-        //CHAMAR FUNÇÃO DE CARREGAMENTO DE DADOS DO BD =============================================
+        //CHAMAR FUNÇÃO DE CARREGAMENTO DE DADOS DO FIREBASE =======================================
         carregarDadosNaListView();
 
         //EVENTOS DE CLIQUE ========================================================================
@@ -92,9 +92,6 @@ public class ListActivity extends AppCompatActivity {
         //CARREGAR SHAREDPREFERENCES ===============================================================
         carregarSharedPreferences();
 
-        //LER O BD PARA SABER QUANTO CADA UM GASTOU ================================================
-        lerBDeSettarValoresTotais();
-
     }
 
 
@@ -104,14 +101,39 @@ public class ListActivity extends AppCompatActivity {
 
     public void carregarDadosNaListView(){
 
+        lista.setAdapter(null);
+        listaArray.clear();
+
         //MÉTODO USANDO FIREBASE
         firebaseClass.getItens().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String nome1 = sharedPreferences.getString("nome1", null);
+                Double soma1 = 0.0;
+                String nome2 = sharedPreferences.getString("nome2", null);
+                Double soma2 = 0.0;
+
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     ItemComprado ic = ds.getValue(ItemComprado.class);
+
+                    if (ic.getComprador().equals(nome1) && ic != null) {
+                        soma1 += ic.getValor();
+                    } else {
+                        soma2 += ic.getValor();
+                    }
+
                     listaArray.add(ic);
                 }
+
+                    textValor1.setText(soma1.toString());
+                    textValor2.setText(soma2.toString());
+
+                    if (soma1 <= soma2) {
+                        textFinal.setText(nome1);
+                    } else {
+                        textFinal.setText(nome2);
+                    }
+
 
                 ArrayAdapter arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_2, android.R.id.text1, listaArray) {
                     @NonNull
@@ -133,6 +155,7 @@ public class ListActivity extends AppCompatActivity {
                 };
 
                 lista.setAdapter(arrayAdapter);
+
             }
 
             @Override
@@ -159,13 +182,19 @@ public class ListActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int which) {
                     //PRECISO PROCURAR VIA QUERY ONDE ESTÁ O QUE EU QUERO DELETAR
                     String nomeDaCompra = listaArray.get(position).getNome();
+                    final String dataDaCompra = listaArray.get(position).getData();
+                    final String compradorDaCompra = listaArray.get(position).getComprador();
+                    final Double valorDaCompra = listaArray.get(position).getValor();
                     Query busca = firebaseClass.getItens().orderByChild("nome").equalTo(nomeDaCompra);
 
                     busca.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             for(DataSnapshot dadoEncontrado: snapshot.getChildren()){
-                                dadoEncontrado.getRef().removeValue();
+                                ItemComprado ic = dadoEncontrado.getValue(ItemComprado.class);
+                                if ( ic.getData().equals(dataDaCompra) && ic.getComprador().equals(compradorDaCompra) && ic.getValor().equals(valorDaCompra)){
+                                    dadoEncontrado.getRef().removeValue();
+                                }
                             }
 
                             //Retira da ArrayList o item que cliquei
@@ -203,56 +232,4 @@ public class ListActivity extends AppCompatActivity {
         textNome2.setText(sharedPreferences.getString("nome2", null));
 
     }
-
-    private void lerBDeSettarValoresTotais() {
-
-        String nome1 = sharedPreferences.getString("nome1", null);
-        String nome2 = sharedPreferences.getString("nome2", null);
-
-        try {
-            android.database.sqlite.SQLiteDatabase bancoDados = MySQLiteDatabase.openDB(getApplicationContext());
-            Cursor cursor = bancoDados.rawQuery("SELECT valor FROM compras WHERE comprador = '"+nome1+"' ", null);
-
-            //INDICES DA TABELA
-            int indiceValor = cursor.getColumnIndex("valor");
-
-            Double valor1 = 0.0;
-
-            //posicionar o cursor o inicio da tabela
-            while (cursor.moveToNext()) {
-                valor1 += cursor.getDouble(indiceValor);
-            }
-            cursor.close();
-
-            textValor1.setText(String.valueOf(valor1));
-
-            //===============================================
-            cursor = bancoDados.rawQuery("SELECT valor FROM compras WHERE comprador = '"+nome2+"' ", null);
-
-            Double valor2 = 0.0;
-
-            //posicionar o cursor o inicio da tabela
-            while (cursor.moveToNext()) {
-                valor2 += cursor.getDouble(indiceValor);
-            }
-            cursor.close();
-
-            textValor2.setText(String.valueOf(valor2));
-
-            // FINAL ===============================================
-            if( valor1 > valor2 ){
-                textFinal.setText(nome2);
-            } else {
-                textFinal.setText(nome1);
-            }
-
-
-        } catch (Exception e){
-            System.out.println("CAIU NA EXCEÇÃO da leitura do quanto cada um gastou!!!");
-            e.printStackTrace();
-        }
-
-
-    }
-
 }
