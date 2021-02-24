@@ -5,11 +5,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,9 +29,7 @@ import com.ugps.paythebill.Firebase.FirebaseClass;
 import com.ugps.paythebill.Objetos.ItemComprado;
 import com.ugps.paythebill.R;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class ListActivity extends AppCompatActivity {
 
@@ -101,13 +97,13 @@ public class ListActivity extends AppCompatActivity {
 
     public void carregarDadosNaListView(){
 
-        lista.setAdapter(null);
-        listaArray.clear();
-
         //MÉTODO USANDO FIREBASE
         firebaseClass.getItens().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                lista.setAdapter(null);
+                listaArray.clear();
+
                 String nome1 = sharedPreferences.getString("nome1", null);
                 Double soma1 = 0.0;
                 String nome2 = sharedPreferences.getString("nome2", null);
@@ -200,8 +196,7 @@ public class ListActivity extends AppCompatActivity {
                             //Retira da ArrayList o item que cliquei
                             listaArray.remove(position);
 
-                            finish();
-                            startActivity(getIntent());
+                            carregarDadosNaListView();
                         }
 
                         @Override
